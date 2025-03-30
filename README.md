@@ -1,3 +1,12 @@
+# Please Note:
+
+**This Repo is intended for private use.**
+**There are some Icons that I've added that are technically intellectual property Or are of unknown Origin.**
+**The LICENSE of this should REPO be consided closed-source until further notice.**
+
+
+**-phantomcortex March 30th, 2025**
+
 # KORA
 
 **Kora** is an SVG icon theme for GNU/Linux operating systems.
