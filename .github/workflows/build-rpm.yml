@@ -39,25 +39,25 @@ jobs:
         
     - name: Create source tarball
       run: |
-        mkdir -p kora-icon-theme-${{ steps.version.outputs.VERSION }}
+        mkdir -p kora-icon-theme-1.6.5.12
         
         # Copy only the main icon directories (adjust names as needed)
         if [ -d "kora" ]; then
-          cp -r kora kora-icon-theme-${{ steps.version.outputs.VERSION }}/
+          cp -r kora kora-icon-theme-1.6.5.12/
         fi
         # Copy MIME types
         if [ -d "mime" ]; then
-          cp -r mime kora-icon-theme-${{ steps.version.outputs.VERSION }}/
+          cp -r mime kora-icon-theme-1.6.5.12/
         fi
         
         # Copy any additional files (README, LICENSE, etc.)
         for file in README* LICENSE* COPYING* AUTHORS* CHANGELOG*; do
           if [ -f "$file" ]; then
-            cp "$file" kora-icon-theme-${{ steps.version.outputs.VERSION }}/
+            cp "$file" kora-icon-theme-1.6.5.12/
           fi
         done
         
-        tar czf ~/rpmbuild/SOURCES/kora-icon-theme-${{ steps.version.outputs.VERSION }}.tar.gz kora-icon-theme-${{ steps.version.outputs.VERSION }}
+        tar czf ~/rpmbuild/SOURCES/kora-icon-theme-1.6.5.12.tar.gz kora-icon-theme-1.6.5.12
         
     - name: Copy spec file
       run: |
@@ -69,19 +69,19 @@ jobs:
         echo "=== Available source files ==="
         ls -la ~/rpmbuild/SOURCES/
         echo "=== Version being used ==="
-        echo "VERSION: ${{ steps.version.outputs.VERSION }}"
+        echo "VERSION: 1.6.5.12"
         
         cd ~/rpmbuild/SPECS
         # Ensure we use the exact same version for both tarball and RPM build
         rpmbuild -ba kora-icon-theme.spec \
-          --define "version ${{ steps.version.outputs.VERSION }}" \
+          --define "version 1.6.5.12" \
           --define "_topdir $HOME/rpmbuild" \
           --define "_sourcedir $HOME/rpmbuild/SOURCES"
           
     - name: Upload RPM artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: kora-icon-theme-rpm-${{ steps.version.outputs.VERSION }}
+        name: kora-icon-theme-rpm-1.6.5.12
         path: |
           ~/rpmbuild/RPMS/noarch/*.rpm
           ~/rpmbuild/SRPMS/*.rpm
