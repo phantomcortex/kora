@@ -62,12 +62,12 @@ jobs:
         
     - name: Copy spec file
       run: |
-        cp kora-icon-theme.spec ~/rpmbuild/SPECS/
+        cp kora-icon-theme-internal.spec ~/rpmbuild/SPECS/
         
     - name: Build RPM
       run: |
         cd ~/rpmbuild/SPECS
-        rpmbuild -ba kora-icon-theme.spec \
+        rpmbuild -ba kora-icon-theme-internal.spec \
           --define "version ${{ steps.version.outputs.VERSION }}" \
           --define "_topdir $HOME/rpmbuild"
           
