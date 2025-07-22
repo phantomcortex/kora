@@ -45,7 +45,6 @@ jobs:
         if [ -d "kora" ]; then
           cp -r kora kora-icon-theme-${{ steps.version.outputs.VERSION }}/
         fi
-        
         # Copy MIME types
         if [ -d "mime" ]; then
           cp -r mime kora-icon-theme-${{ steps.version.outputs.VERSION }}/
@@ -66,10 +65,18 @@ jobs:
         
     - name: Build RPM
       run: |
+        # Debug: Show what files we have
+        echo "=== Available source files ==="
+        ls -la ~/rpmbuild/SOURCES/
+        echo "=== Version being used ==="
+        echo "VERSION: ${{ steps.version.outputs.VERSION }}"
+        
         cd ~/rpmbuild/SPECS
+        # Ensure we use the exact same version for both tarball and RPM build
         rpmbuild -ba kora-icon-theme.spec \
           --define "version ${{ steps.version.outputs.VERSION }}" \
-          --define "_topdir $HOME/rpmbuild"
+          --define "_topdir $HOME/rpmbuild" \
+          --define "_sourcedir $HOME/rpmbuild/SOURCES"
           
     - name: Upload RPM artifacts
       uses: actions/upload-artifact@v4
