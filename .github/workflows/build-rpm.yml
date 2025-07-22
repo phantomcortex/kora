@@ -39,42 +39,42 @@ jobs:
         
     - name: Create source tarball
       run: |
-        mkdir -p kora-icon-theme-${{ steps.version.outputs.VERSION }}
+        mkdir -p kora-icon-theme-internal-${{ steps.version.outputs.VERSION }}
         
         # Copy only the main icon directories (adjust names as needed)
         if [ -d "kora" ]; then
-          cp -r kora kora-icon-theme-${{ steps.version.outputs.VERSION }}/
+          cp -r kora kora-icon-theme-internal-${{ steps.version.outputs.VERSION }}/
         fi
         
         # Copy MIME types
         if [ -d "mime" ]; then
-          cp -r mime kora-icon-theme-${{ steps.version.outputs.VERSION }}/
+          cp -r mime kora-icon-theme-internal-${{ steps.version.outputs.VERSION }}/
         fi
         
         # Copy any additional files (README, LICENSE, etc.)
         for file in README* LICENSE* COPYING* AUTHORS* CHANGELOG*; do
           if [ -f "$file" ]; then
-            cp "$file" kora-icon-theme-${{ steps.version.outputs.VERSION }}/
+            cp "$file" kora-icon-theme-internal-${{ steps.version.outputs.VERSION }}/
           fi
         done
         
-        tar czf ~/rpmbuild/SOURCES/kora-icon-theme-${{ steps.version.outputs.VERSION }}.tar.gz kora-icon-theme-${{ steps.version.outputs.VERSION }}
+        tar czf ~/rpmbuild/SOURCES/kora-icon-theme-internal-${{ steps.version.outputs.VERSION }}.tar.gz kora-icon-theme-internal-${{ steps.version.outputs.VERSION }}
         
     - name: Copy spec file
       run: |
-        cp kora-icon-theme-internal.spec ~/rpmbuild/SPECS/
+        cp kora-icon-theme-internal-internal.spec ~/rpmbuild/SPECS/
         
     - name: Build RPM
       run: |
         cd ~/rpmbuild/SPECS
-        rpmbuild -ba kora-icon-theme-internal.spec \
+        rpmbuild -ba kora-icon-theme-internal-internal.spec \
           --define "version ${{ steps.version.outputs.VERSION }}" \
           --define "_topdir $HOME/rpmbuild"
           
     - name: Upload RPM artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: kora-icon-theme-rpm-${{ steps.version.outputs.VERSION }}
+        name: kora-icon-theme-internal-rpm-${{ steps.version.outputs.VERSION }}
         path: |
           ~/rpmbuild/RPMS/noarch/*.rpm
           ~/rpmbuild/SRPMS/*.rpm
