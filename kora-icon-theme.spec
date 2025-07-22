@@ -20,11 +20,6 @@ Requires:       shared-mime-info
 
 
 
-%build
-%configure
-%make_build
-
-
 %install
 
 rm -rf %{buildroot}
