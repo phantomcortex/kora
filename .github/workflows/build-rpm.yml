@@ -30,7 +30,9 @@ jobs:
         if [[ $GITHUB_REF == refs/tags/* ]]; then
           VERSION=${GITHUB_REF#refs/tags/v}
         else
-          VERSION=$(date +%Y%m%d).git.$(git rev-parse --short HEAD)
+          # Use GitHub's provided SHA instead of git command
+          SHORT_SHA=${GITHUB_SHA:0:7}
+          VERSION=$(date +%Y%m%d).git.${SHORT_SHA}
         fi
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Building version: $VERSION"
@@ -43,6 +45,7 @@ jobs:
         if [ -d "kora" ]; then
           cp -r kora kora-icon-theme-${{ steps.version.outputs.VERSION }}/
         fi
+        
         # Copy MIME types
         if [ -d "mime" ]; then
           cp -r mime kora-icon-theme-${{ steps.version.outputs.VERSION }}/
