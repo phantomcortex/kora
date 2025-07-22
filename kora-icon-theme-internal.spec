@@ -10,7 +10,7 @@ Source0:        %{name}-%version.tar.gz
 BuildArch:      noarch
 
 BuildRequires:  coreutils
-Requires:       
+Requires:       shared-mime-info 
 
 %description
 
@@ -31,6 +31,18 @@ rm -rf %{buildroot}
 
 # Create the icons directory
 mkdir -p %{buildroot}%{_datadir}/icons
+
+# Create the MIME directory
+mkdir -p %{buildroot}%{_datadir}/mime/packages
+
+# Install MIME types
+if [ -d "mime/packages" ]; then
+    echo "Installing MIME types"
+    cp -r mime/packages/* %{buildroot}%{_datadir}/mime/packages/
+    
+    # Ensure proper permissions for MIME files
+    find %{buildroot}%{_datadir}/mime/packages -type f -exec chmod 644 {} \;
+fi
 
 # Install icon themes (adjust directory names as needed based on your repo structure)
 for theme_dir in kora; do
@@ -57,8 +69,7 @@ done
 %license
 %doc
 %{_datadir}/icons/kora*/
-
-
+%{_datadir}/mime/packages/*
 
 
 %postun
@@ -72,6 +83,11 @@ if [ $1 -eq 0 ]; then
             fi
         fi
     done
+    
+    # Update MIME database after removal
+    if [ -x %{_bindir}/update-mime-database ]; then
+        %{_bindir}/update-mime-database %{_datadir}/mime &>/dev/null || :
+    fi
 fi
 
 

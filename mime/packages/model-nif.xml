@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="model/nif">
+    <generic-icon name="image-x-generic"/>
+    <comment>NetImmerse Game File</comment>
+    <glob pattern="*.nif"/>
+  </mime-type>
+
+</mime-info>
