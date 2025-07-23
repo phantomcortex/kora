@@ -1,43 +1,12 @@
 # Please Note:
 
-**This Repo is intended for private use.**
-**There are some Icons that I've added that are technically intellectual property Or are of unknown Origin.**
-**The LICENSE of this should REPO be consided closed-source until further notice.**
+**You probably shoudn't be using this repo...**
 
+**There are some Icons that I've added that are Intellectual Property, Such as the skyrim logo.**
+![](skyrim_logo.png)
 
-**-phantomcortex March 30th, 2025**
-
-# KORA
-
-**Kora** is an SVG icon theme for GNU/Linux operating systems.
-
-To make them display properly, you may need to update the icon cache. A script is included.
-
-Different versions available:
-* ***kora*** - for dark themes with dark panel
-* ***kora-light*** - for light themes with dark panel (depends on Kora)
-* ***kora-light-panel*** - for light themes with light panel (depends on Kora and Kora-light)
-* ***kora-pgrey*** - theme with grey folder colors (depends on Kora)
-
-
-## Installation
-
-Clone this repository on your system
-
-    git clone https://github.com/bikass/kora.git
-
-and copy ***kora***, ***kora-light***, ***kora-light-panel*** and ***kora-pgrey*** subfolders to one of the following folders:
-
-* `/usr/share/icons/` - icons available system-wide
-* `$HOME/.local/share/icons/` - icons only available to local user
-
-
-### Specific Linux distributions
-
-* **Arch**: [stable](https://aur.archlinux.org/packages/kora-icon-theme/)
-* **Fedora**: [repository](https://copr.fedorainfracloud.org/coprs/hazel-bunny/ricing/package/kora-icon-theme)
-* **openSuse**: [repository](https://build.opensuse.org/package/show/home:guinuxbr/kora-icon-theme)
-* **Solus**: sudo eopkg it korla-icon-theme
+**These extra addtions to the kora-icon-theme are simply some icons that i grabbed from Steamgrid**
+**This is only public so I can easily have github add it my ublue/bazzite OS images**
 
 
 
