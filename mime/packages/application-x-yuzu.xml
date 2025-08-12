@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
-    <mime-type type="application/x-yuzu">
+    <mime-type type="application/x-nx-nsz">
+        <comment>Nintendo Switch Game File</comment>
+        <glob pattern="*.nsz"/>
+    </mime-type>
+    <mime-type type="application/x-nx-nro">
+        <comment>Nintendo Switch Game File</comment>
+        <glob pattern="*.nro"/>
+    </mime-type>
+    <mime-type type="application/x-nx-nso">
+        <comment>Nintendo Switch Game File</comment>
+        <glob pattern="*.nso"/>
+    </mime-type>
+    <mime-type type="application/x-nx-xci">
         <comment>Nintendo Switch Game File</comment>
         <glob-deleteall/>
-        <glob pattern="*.nsp"/>
-        <glob pattern="*.nsz"/>
         <glob pattern="*.xci"/>
+    </mime-type>
+    <mime-type type="application/x-nx-nsp">
+        <comment>Nintendo Switch Game File</comment>
+        <glob pattern="*.nsp"/>
     </mime-type>
 </mime-info>
