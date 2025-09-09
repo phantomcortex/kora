@@ -131,7 +131,7 @@ jobs:
     - name: Create Release
       # Create releases for pushes to main/master, not just tags
       if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: v${{ steps.version.outputs.VERSION }}
         name: Release v${{ steps.version.outputs.VERSION }}
@@ -152,13 +152,29 @@ jobs:
           ### Changes
           View [recent commits](https://github.com/${{ github.repository }}/commits/main) for details.
         files: |
-          ~/rpmbuild/RPMS/noarch/*.rpm
-          ~/rpmbuild/SRPMS/*.rpm
+          rpms/*.rpm
         draft: false
         prerelease: false
         generate_release_notes: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Alternative Release Method (if above fails)
+      # Fallback method using GitHub CLI
+      if: failure() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        VERSION=$(cat VERSION.txt)
+        
+        # Install GitHub CLI
+        dnf install -y gh
+        
+        # Create release using GitHub CLI
+        gh release create "v${VERSION}" \
+          --repo "${{ github.repository }}" \
+          --title "Release v${VERSION}" \
+          --notes "Automated build from commit ${{ github.sha }}" \
+          rpms/*.rpm
         
     - name: Upload version for next build
       # Store the version number as a release asset for reference
