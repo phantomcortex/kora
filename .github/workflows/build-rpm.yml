@@ -15,10 +15,12 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Need full history for version calculation
       
     - name: Install build dependencies
       run: |
-        dnf install -y rpm-build rpmdevtools git
+        dnf install -y rpm-build rpmdevtools git jq curl
         
     - name: Set up RPM build environment
       run: |
@@ -26,73 +28,140 @@ jobs:
         
     - name: Determine version
       id: version
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        if [[ $GITHUB_REF == refs/tags/* ]]; then
+        # Base version components
+        MAJOR=1
+        MINOR=6
+        PATCH=5
+        
+        # Get the latest release to find the last build number
+        LATEST_RELEASE=$(curl -s -H "Authorization: token $GH_TOKEN" \
+          "https://api.github.com/repos/${{ github.repository }}/releases/latest" | jq -r '.tag_name // "v0.0.0.0"')
+        
+        # Extract build number from last release (format: v1.6.5.BUILD)
+        if [[ $LATEST_RELEASE =~ v[0-9]+\.[0-9]+\.[0-9]+\.([0-9]+) ]]; then
+          LAST_BUILD=${BASH_REMATCH[1]}
+        else
+          LAST_BUILD=0
+        fi
+        
+        # Increment build number
+        BUILD=$((LAST_BUILD + 1))
+        
+        # Handle manual version tags (e.g., v2.0.0.1 for major updates)
+        if [[ $GITHUB_REF == refs/tags/v* ]]; then
+          # Use the tag version as-is
           VERSION=${GITHUB_REF#refs/tags/v}
         else
-          # Use GitHub's provided SHA instead of git command
-          SHORT_SHA=${GITHUB_SHA:0:7}
-          VERSION=$(date +%Y%m%d).git.${SHORT_SHA}
+          # Auto-increment for regular commits
+          VERSION="${MAJOR}.${MINOR}.${PATCH}.${BUILD}"
         fi
+        
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Building version: $VERSION"
         
+        # Store version for later steps
+        echo "$VERSION" > VERSION.txt
+        
     - name: Create source tarball
       run: |
-        mkdir -p kora-icon-theme-1.6.5.12
+        VERSION=$(cat VERSION.txt)
+        DIRNAME="kora-icon-theme-${VERSION}"
+        mkdir -p "$DIRNAME"
         
-        # Copy only the main icon directories (adjust names as needed)
+        # Copy only the main icon directories
         if [ -d "kora" ]; then
-          cp -r kora kora-icon-theme-1.6.5.12/
-        fi
-        # Copy MIME types
-        if [ -d "mime" ]; then
-          cp -r mime kora-icon-theme-1.6.5.12/
+          cp -r kora "$DIRNAME/"
         fi
         
-        # Copy any additional files (README, LICENSE, etc.)
-        for file in README* LICENSE* COPYING* AUTHORS* CHANGELOG*; do
-          if [ -f "$file" ]; then
-            cp "$file" kora-icon-theme-1.6.5.12/
+        # Additional icon directories if they exist
+        for dir in kora-light kora-light-panel kora-pgrey; do
+          if [ -d "$dir" ]; then
+            cp -r "$dir" "$DIRNAME/"
           fi
         done
         
-        tar czf ~/rpmbuild/SOURCES/kora-icon-theme-1.6.5.12.tar.gz kora-icon-theme-1.6.5.12
+        # Copy MIME types
+        if [ -d "mime" ]; then
+          cp -r mime "$DIRNAME/"
+        fi
         
-    - name: Copy spec file
+        # Copy any additional files
+        for file in README* LICENSE* COPYING* AUTHORS* CHANGELOG*; do
+          if [ -f "$file" ]; then
+            cp "$file" "$DIRNAME/"
+          fi
+        done
+        
+        # Create VERSION file in the package
+        echo "$VERSION" > "$DIRNAME/VERSION"
+        
+        tar czf ~/rpmbuild/SOURCES/"${DIRNAME}.tar.gz" "$DIRNAME"
+        
+    - name: Generate dynamic spec file
       run: |
-        cp kora-icon-theme.spec ~/rpmbuild/SPECS/
+        VERSION=$(cat VERSION.txt)
+        
+        # Replace version placeholder in spec file
+        sed "s/__VERSION__/${VERSION}/g" kora-icon-theme.spec > ~/rpmbuild/SPECS/kora-icon-theme.spec
         
     - name: Build RPM
       run: |
-        # Debug: Show what files we have
-        echo "=== Available source files ==="
-        ls -la ~/rpmbuild/SOURCES/
-        echo "=== Version being used ==="
-        echo "VERSION: 1.6.5.12"
+        VERSION=$(cat VERSION.txt)
         
+        echo "=== Building RPM version ${VERSION} ==="
         cd ~/rpmbuild/SPECS
-        # Ensure we use the exact same version for both tarball and RPM build
+        
         rpmbuild -ba kora-icon-theme.spec \
-          --define "version 1.6.5.12" \
+          --define "version ${VERSION}" \
           --define "_topdir $HOME/rpmbuild" \
           --define "_sourcedir $HOME/rpmbuild/SOURCES"
           
     - name: Upload RPM artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: kora-icon-theme-rpm-1.6.5.12
+        name: kora-icon-theme-rpm-${{ steps.version.outputs.VERSION }}
         path: |
           ~/rpmbuild/RPMS/noarch/*.rpm
           ~/rpmbuild/SRPMS/*.rpm
         retention-days: 30
         
-    - name: Create Release (on tags)
-      if: startsWith(github.ref, 'refs/tags/')
+    - name: Create Release
+      # Create releases for pushes to main/master, not just tags
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       uses: softprops/action-gh-release@v1
       with:
+        tag_name: v${{ steps.version.outputs.VERSION }}
+        name: Release v${{ steps.version.outputs.VERSION }}
+        body: |
+          ## Kora Icon Theme v${{ steps.version.outputs.VERSION }}
+          
+          ### Automated Build
+          - **Build Date**: ${{ github.event.head_commit.timestamp }}
+          - **Commit**: ${{ github.sha }}
+          - **Commit Message**: ${{ github.event.head_commit.message }}
+          
+          ### Installation
+          Download the RPM file below and install with:
+          ```bash
+          sudo dnf install ./kora-icon-theme-*.rpm
+          ```
+          
+          ### Changes
+          View [recent commits](https://github.com/${{ github.repository }}/commits/main) for details.
         files: |
           ~/rpmbuild/RPMS/noarch/*.rpm
           ~/rpmbuild/SRPMS/*.rpm
+        draft: false
+        prerelease: false
+        generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Upload version for next build
+      # Store the version number as a release asset for reference
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      run: |
+        echo "Version ${{ steps.version.outputs.VERSION }} has been released"
