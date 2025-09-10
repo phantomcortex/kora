@@ -79,8 +79,6 @@ for theme_dir in %{buildroot}%{_datadir}/icons/kora*; do
 done
 
 %files
-%license LICENSE* COPYING*
-%doc README* AUTHORS* CHANGELOG*
 %{_datadir}/icons/kora*/
 %{_datadir}/mime/packages/*
 
