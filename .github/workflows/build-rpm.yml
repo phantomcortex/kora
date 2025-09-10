@@ -152,8 +152,7 @@ jobs:
           ### Changes
           View [recent commits](https://github.com/${{ github.repository }}/commits/main) for details.
         files: |
-          ~/rpmbuild/RPMS/noarch/*.rpm
-          ~/rpmbuild/SRPMS/*.rpm
+          rpms/*.rpm
         draft: false
         prerelease: false
         generate_release_notes: true
