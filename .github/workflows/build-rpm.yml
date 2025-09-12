@@ -114,7 +114,7 @@ jobs:
         echo "=== Building RPM version ${VERSION} ==="
         cd ~/rpmbuild/SPECS
         
-        rpmbuild -ba kora-icon-theme.spec \
+        rpmbuild -bb kora-icon-theme.spec \
           --define "version ${VERSION}" \
           --define "_topdir $HOME/rpmbuild" \
           --define "_sourcedir $HOME/rpmbuild/SOURCES"
@@ -127,12 +127,39 @@ jobs:
           ~/rpmbuild/RPMS/noarch/*.rpm
           ~/rpmbuild/SRPMS/*.rpm
         retention-days: 30
+       
+    - name: Find RPM files
+      id: find_rpms
+      run: |
+        # Find all RPM files in the downloaded artifacts
+        echo "Finding RPM files..."
+        find ./artifacts -name "*.rpm" -type f > rpm_files.txt
         
+        # Extract version from RPM filename
+        RPM_FILE=$(head -1 rpm_files.txt)
+        if [[ $RPM_FILE =~ kora-icon-theme-([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+) ]]; then
+          VERSION=${BASH_REMATCH[1]}
+        else
+          VERSION="unknown"
+        fi
+        
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        
+        # Move all RPMs to release directory
+        mkdir -p release-files
+        while read rpm; do
+          cp "$rpm" release-files/
+        done < rpm_files.txt
+        
+        echo "Found RPMs:"
+        ls -la release-files/
+
     - name: Create Release
       # Create releases for pushes to main/master, not just tags
       if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       uses: softprops/action-gh-release@v2
       with:
+        artifacts: "release-files/*.rpm"
         tag_name: v${{ steps.version.outputs.VERSION }}
         name: Release v${{ steps.version.outputs.VERSION }}
         body: |
@@ -151,33 +178,7 @@ jobs:
           
           ### Changes
           View [recent commits](https://github.com/${{ github.repository }}/commits/main) for details.
-        files: |
-          rpms/*.rpm
         draft: false
         prerelease: false
         generate_release_notes: true
         token: ${{ secrets.GITHUB_TOKEN }}
-        
-    - name: Alternative Release Method (if above fails)
-      # Fallback method using GitHub CLI
-      if: failure() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        VERSION=$(cat VERSION.txt)
-        
-        # Install GitHub CLI
-        dnf install -y gh
-        
-        # Create release using GitHub CLI
-        gh release create "v${VERSION}" \
-          --repo "${{ github.repository }}" \
-          --title "Release v${VERSION}" \
-          --notes "Automated build from commit ${{ github.sha }}" \
-          rpms/*.rpm
-        
-    - name: Upload version for next build
-      # Store the version number as a release asset for reference
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-      run: |
-        echo "Version ${{ steps.version.outputs.VERSION }} has been released"
