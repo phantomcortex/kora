@@ -53,14 +53,25 @@ git push origin v1.7.0.1
 
 ## Installation from Releases
 
-Each release includes pre-built RPM packages. To install:
+Each release includes a pre-built RPM package (binary only, no source RPMs). 
+
+### Quick Installation (Latest Version)
 
 ```bash
-# Download the latest release
-curl -LO https://github.com/phantomcortex/kora/releases/latest/download/kora-icon-theme-*.rpm
+# Direct installation with dnf5 - one command!
+sudo dnf5 -y install $(curl -s https://api.github.com/repos/phantomcortex/kora/releases/latest | grep "browser_download_url.*\.rpm" | cut -d '"' -f 4)
+```
 
-# Install with dnf
-sudo dnf install ./kora-icon-theme-*.rpm
+### Alternative Installation Methods
+
+```bash
+# Download first, then install
+curl -LO $(curl -s https://api.github.com/repos/phantomcortex/kora/releases/latest | grep "browser_download_url.*\.rpm" | cut -d '"' -f 4)
+sudo dnf5 -y install ./kora-icon-theme-*.rpm
+
+# Install specific version
+VERSION=1.6.5.15
+sudo dnf5 -y install https://github.com/phantomcortex/kora/releases/download/v${VERSION}/kora-icon-theme-${VERSION}-1.fc42.noarch.rpm
 ```
 
 ## Workflow Configuration
