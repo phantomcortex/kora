@@ -1,0 +1,83 @@
+# .github/workflows/create-release.yml
+# Alternative approach: Separate workflow for creating releases
+# This runs after the build workflow completes
+
+name: Create Release
+
+on:
+  workflow_run:
+    workflows: ["Build Kora Icon Theme RPM"]
+    types:
+      - completed
+    branches: [main, master]
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  create-release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Download artifacts from build workflow
+      uses: actions/download-artifact@v4
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        run-id: ${{ github.event.workflow_run.id }}
+        path: ./artifacts
+    
+    - name: Find RPM files
+      id: find_rpms
+      run: |
+        # Find all RPM files in the downloaded artifacts
+        echo "Finding RPM files..."
+        find ./artifacts -name "*.rpm" -type f > rpm_files.txt
+        
+        # Extract version from RPM filename
+        RPM_FILE=$(head -1 rpm_files.txt)
+        if [[ $RPM_FILE =~ kora-icon-theme-([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+) ]]; then
+          VERSION=${BASH_REMATCH[1]}
+        else
+          VERSION="unknown"
+        fi
+        
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        
+        # Move all RPMs to release directory
+        mkdir -p release-files
+        while read rpm; do
+          cp "$rpm" release-files/
+        done < rpm_files.txt
+        
+        echo "Found RPMs:"
+        ls -la release-files/
+    
+    - name: Create GitHub Release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: "release-files/*.rpm"
+        tag: v${{ steps.find_rpms.outputs.VERSION }}
+        name: Release v${{ steps.find_rpms.outputs.VERSION }}
+        body: |
+          ## Kora Icon Theme v${{ steps.find_rpms.outputs.VERSION }}
+          
+          Automated release from workflow run #${{ github.event.workflow_run.run_number }}
+          
+          ### Installation
+          ```bash
+          sudo dnf5 -y install ./kora-icon-theme-*.rpm
+          ```
+          
+          Or install directly:
+          ```bash
+          sudo dnf5 -y install https://github.com/phantomcortex/kora/releases/download/v${{ steps.find_rpms.outputs.VERSION }}/kora-icon-theme-${{ steps.find_rpms.outputs.VERSION }}-1.fc42.noarch.rpm
+          ```
+        draft: false
+        prerelease: false
+        allowUpdates: true
+        token: ${{ secrets.GITHUB_TOKEN }}
