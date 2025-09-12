@@ -88,13 +88,6 @@ jobs:
           cp -r mime "$DIRNAME/"
         fi
         
-        # Copy any additional files
-        for file in README* LICENSE* COPYING* AUTHORS* CHANGELOG*; do
-          if [ -f "$file" ]; then
-            cp "$file" "$DIRNAME/"
-          fi
-        done
-        
         # Create VERSION file in the package
         echo "$VERSION" > "$DIRNAME/VERSION"
         
@@ -119,47 +112,12 @@ jobs:
           --define "_topdir $HOME/rpmbuild" \
           --define "_sourcedir $HOME/rpmbuild/SOURCES"
           
-    - name: Upload RPM artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: kora-icon-theme-rpm-${{ steps.version.outputs.VERSION }}
-        path: |
-          ~/rpmbuild/RPMS/noarch/*.rpm
-          ~/rpmbuild/SRPMS/*.rpm
-        retention-days: 30
-       
-    - name: Find RPM files
-      id: find_rpms
-      run: |
-        # Find all RPM files in the downloaded artifacts
-        echo "Finding RPM files..."
-        find ./artifacts -name "*.rpm" -type f > rpm_files.txt
-        
-        # Extract version from RPM filename
-        RPM_FILE=$(head -1 rpm_files.txt)
-        if [[ $RPM_FILE =~ kora-icon-theme-([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+) ]]; then
-          VERSION=${BASH_REMATCH[1]}
-        else
-          VERSION="unknown"
-        fi
-        
-        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-        
-        # Move all RPMs to release directory
-        mkdir -p release-files
-        while read rpm; do
-          cp "$rpm" release-files/
-        done < rpm_files.txt
-        
-        echo "Found RPMs:"
-        ls -la release-files/
 
     - name: Create Release
       # Create releases for pushes to main/master, not just tags
       if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       uses: softprops/action-gh-release@v2
       with:
-        artifacts: "release-files/*.rpm"
         tag_name: v${{ steps.version.outputs.VERSION }}
         name: Release v${{ steps.version.outputs.VERSION }}
         body: |
@@ -178,6 +136,8 @@ jobs:
           
           ### Changes
           View [recent commits](https://github.com/${{ github.repository }}/commits/main) for details.
+        files: |
+          rpms/*.rpm
         draft: false
         prerelease: false
         generate_release_notes: true
