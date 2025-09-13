@@ -113,6 +113,13 @@ jobs:
           --define "_sourcedir $HOME/rpmbuild/SOURCES"
           
 
+    - name: Collect built RPMs
+      run: |
+        mkdir -p rpms
+        find ~/rpmbuild/RPMS -name "*.rpm" -exec cp {} rpms/ \;
+        echo "=== RPMs ready for release ==="
+        ls -la rpms/
+        
     - name: Create Release
       # Create releases for pushes to main/master, not just tags
       if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
@@ -124,22 +131,19 @@ jobs:
         body: |
           ## Kora Icon Theme v${{ steps.version.outputs.VERSION }}
           
-          ### Automated Build
+          ### 📦 Package Download
+          **RPM Package**: `kora-icon-theme-${{ steps.version.outputs.VERSION }}-1.fc42.noarch.rpm`
+          
+          ### Build Information
           - **Build Date**: ${{ github.event.head_commit.timestamp }}
           - **Commit**: ${{ github.sha }}
           - **Commit Message**: ${{ github.event.head_commit.message }}
-          
-          ### Installation
-          Download the RPM file below and install with:
-          ```bash
-          sudo dnf install ./kora-icon-theme-*.rpm
-          ```
-          
-          ### Changes
-          View [recent commits](https://github.com/${{ github.repository }}/commits/main) for details.
-        draft: false
-        prerelease: false
-        allowUpdates: true 
-        artifactErrorsFailBuild: true
-        generate_release_notes: true
-        token: ${{ secrets.GITHUB_TOKEN }}
+      
+      ### Changes
+      View [recent commits](https://github.com/${{ github.repository }}/commits/main) for details.
+    draft: false
+    prerelease: false
+    allowUpdates: true
+    artifactErrorsFailBuild: true
+    generateReleaseNotes: true
+    token: ${{ secrets.GITHUB_TOKEN }}
