@@ -116,9 +116,10 @@ jobs:
     - name: Create Release
       # Create releases for pushes to main/master, not just tags
       if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-      uses: softprops/action-gh-release@v2
+      uses: ncipollo/release-action@v1.20.0
       with:
-        tag_name: v${{ steps.version.outputs.VERSION }}
+        artifacts: "rpms/*.rpm"
+        tag: v${{ steps.version.outputs.VERSION }}
         name: Release v${{ steps.version.outputs.VERSION }}
         body: |
           ## Kora Icon Theme v${{ steps.version.outputs.VERSION }}
@@ -136,9 +137,9 @@ jobs:
           
           ### Changes
           View [recent commits](https://github.com/${{ github.repository }}/commits/main) for details.
-        files: |
-          rpms/*.rpm
         draft: false
         prerelease: false
+        allowUpdates: true 
+        artifactErrorsFailBuild: true
         generate_release_notes: true
         token: ${{ secrets.GITHUB_TOKEN }}
