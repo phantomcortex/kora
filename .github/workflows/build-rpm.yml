@@ -139,8 +139,8 @@ jobs:
           - **Commit**: ${{ github.sha }}
           - **Commit Message**: ${{ github.event.head_commit.message }}
       
-      ### Changes
-      View [recent commits](https://github.com/${{ github.repository }}/commits/main) for details.
+	  ### Changes
+	  View [recent commits](https://github.com/${{ github.repository }}/commits/main) for details.
     draft: false
     prerelease: false
     allowUpdates: true
