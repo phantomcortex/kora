@@ -114,15 +114,16 @@ jobs:
           
 
     - name: Upload RPM
-        uses: actions/upload-artifact@v4
-        with:
-          name: kora-icon-theme-${{ steps.version.outputs.VERSION }}.rpm
-          path: dist/*.rpm
-          if-no-files-found: ignore
+      uses: actions/upload-artifact@v4
+      with:
+        name: kora-icon-theme-${{ steps.version.outputs.VERSION }}.rpm
+        path: dist/*.rpm
+        if-no-files-found: ignore
     
   release:
     runs-on: ubuntu-latest
-     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    steps:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
@@ -144,7 +145,6 @@ jobs:
 
           files: |
             dist/*.rpm
-            dist/*.tar.gz
           draft: false
           prerelease: false
           generate_release_notes: true
