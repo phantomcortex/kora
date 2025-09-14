@@ -113,37 +113,40 @@ jobs:
           --define "_sourcedir $HOME/rpmbuild/SOURCES"
           
 
-    - name: Collect built RPMs
-      run: |
-        mkdir -p rpms
-        find ~/rpmbuild/RPMS -name "*.rpm" -exec cp {} rpms/ \;
-        echo "=== RPMs ready for release ==="
-        ls -la rpms/
-        
-    - name: Create Release
-      # Create releases for pushes to main/master, not just tags
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-      uses: ncipollo/release-action@v1.20.0
-      with:
-        artifacts: "rpms/*.rpm"
-        tag: v${{ steps.version.outputs.VERSION }}
-        name: Release v${{ steps.version.outputs.VERSION }}
-        body: |
-          ## Kora Icon Theme v${{ steps.version.outputs.VERSION }}
+    - name: Upload RPM
+        uses: actions/upload-artifact@v4
+        with:
+          name: kora-icon-theme-${{ steps.version.outputs.VERSION }}.rpm
+          path: dist/*.rpm
+          if-no-files-found: ignore
+    
+  release:
+    runs-on: ubuntu-latest
+     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.VERSION }}
+          name: Release v${{ steps.version.outputs.VERSION }}
+          body: |
+            ## Kora Icon Theme v${{ steps.version.outputs.VERSION }}
           
-          ### 📦 Package Download
-          **RPM Package**: `kora-icon-theme-${{ steps.version.outputs.VERSION }}-1.fc42.noarch.rpm`
+            ### 📦 Package Download
+            **RPM Package**: `kora-icon-theme-${{ steps.version.outputs.VERSION }}-1.fc42.noarch.rpm`
           
-          ### Build Information
-          - **Build Date**: ${{ github.event.head_commit.timestamp }}
-          - **Commit**: ${{ github.sha }}
-          - **Commit Message**: ${{ github.event.head_commit.message }}
+            ### Build Information
+            - **Build Date**: ${{ github.event.head_commit.timestamp }}
+            - **Commit**: ${{ github.sha }}
+            - **Commit Message**: ${{ github.event.head_commit.message }}
       
-	  ### Changes
-	  View [recent commits](https://github.com/${{ github.repository }}/commits/main) for details.
-    draft: false
-    prerelease: false
-    allowUpdates: true
-    artifactErrorsFailBuild: true
-    generateReleaseNotes: true
-    token: ${{ secrets.GITHUB_TOKEN }}
+	          ### Changes
+	          View [recent commits](https://github.com/${{ github.repository }}/commits/main) for details.
+
+          files: |
+            dist/*.rpm
+            dist/*.tar.gz
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
