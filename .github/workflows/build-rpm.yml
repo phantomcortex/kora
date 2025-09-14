@@ -140,7 +140,7 @@ jobs:
           ### Changes
           View [recent commits](https://github.com/${{ github.repository }}/commits/main) for details.
         files: |
-          ~/RPMs/*.rpm
+          /home/runner/RPMs/*.rpm
         allowUpdates: true
         draft: false
         prerelease: false
