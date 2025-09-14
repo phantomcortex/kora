@@ -123,18 +123,27 @@ jobs:
         path: ~/RPMs/*.rpm
         if-no-files-found: ignore
     
-    - name: release
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-    steps:
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ steps.version.outputs.VERSION }}
-          name: Release v${{ steps.version.outputs.VERSION }}
-          files: |
-            RPMs/*.rpm
-          draft: false
-          prerelease: false
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create Release
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v${{ steps.version.outputs.VERSION }}
+        name: Release v${{ steps.version.outputs.VERSION }}
+        body: | 
+          ## Kora Icon Theme v${{ steps.version.outputs.VERSION }}
+            
+          ### Automated Build
+          - **Build Date**: ${{ github.event.head_commit.timestamp }}
+          - **Commit**: ${{ github.sha }}
+          - **Commit Message**: ${{ github.event.head_commit.message }}
+
+          ### Changes
+          View [recent commits](https://github.com/${{ github.repository }}/commits/main) for details.
+        files: |
+          RPMs/*.rpm
+        allowUpdates: true
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
