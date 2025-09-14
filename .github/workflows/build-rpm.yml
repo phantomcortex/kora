@@ -34,7 +34,7 @@ jobs:
         # Base version components
         MAJOR=1
         MINOR=6
-        PATCH=5
+        PATCH=6
         
         # Get the latest release to find the last build number
         LATEST_RELEASE=$(curl -s -H "Authorization: token $GH_TOKEN" \
@@ -140,7 +140,7 @@ jobs:
           ### Changes
           View [recent commits](https://github.com/${{ github.repository }}/commits/main) for details.
         files: |
-          RPMs/*.rpm
+          ~/RPMs/*.rpm
         allowUpdates: true
         draft: false
         prerelease: false
