@@ -111,13 +111,16 @@ jobs:
           --define "version ${VERSION}" \
           --define "_topdir $HOME/rpmbuild" \
           --define "_sourcedir $HOME/rpmbuild/SOURCES"
-          
+         
+        mkdir -p ~/RPMs 
+        find ~/ -iname "*.rpm" -exec mv {} ~/RPMs \;
+        [ -e ~/RPMs/*.rpm ] && echo "success"
 
     - name: Upload RPM
       uses: actions/upload-artifact@v4
       with:
         name: kora-icon-theme-${{ steps.version.outputs.VERSION }}.rpm
-        path: dist/*.rpm
+        path: ~/RPMs/*.rpm
         if-no-files-found: ignore
     
   release:
@@ -130,7 +133,7 @@ jobs:
           tag_name: v${{ steps.version.outputs.VERSION }}
           name: Release v${{ steps.version.outputs.VERSION }}
           files: |
-            dist/*.rpm
+            RPMs/*.rpm
           draft: false
           prerelease: false
           generate_release_notes: true
