@@ -129,19 +129,6 @@ jobs:
         with:
           tag_name: v${{ steps.version.outputs.VERSION }}
           name: Release v${{ steps.version.outputs.VERSION }}
-          body: |
-            ## Kora Icon Theme v${{ steps.version.outputs.VERSION }}
-          
-            ### 📦 Package Download
-            **RPM Package**: `kora-icon-theme-${{ steps.version.outputs.VERSION }}-1.fc42.noarch.rpm`
-          
-            ### Build Information
-            - **Build Date**: ${{ github.event.head_commit.timestamp }}
-            - **Commit**: ${{ github.sha }}
-            - **Commit Message**: ${{ github.event.head_commit.message }}
-      
-	          ### Changes
-	          View [recent commits](https://github.com/${{ github.repository }}/commits/main) for details.
           files: |
             dist/*.rpm
           draft: false
