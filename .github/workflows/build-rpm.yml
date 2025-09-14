@@ -123,8 +123,7 @@ jobs:
         path: ~/RPMs/*.rpm
         if-no-files-found: ignore
     
-  release:
-    runs-on: ubuntu-latest
+    - name: release
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     steps:
       - name: Create GitHub Release
