@@ -122,7 +122,14 @@ jobs:
         name: kora-icon-theme-${{ steps.version.outputs.VERSION }}.rpm
         path: ~/RPMs/*.rpm
         if-no-files-found: ignore
-    
+
+    - name: Download RPM artifact
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      uses: actions/download-artifact@v4
+      with:
+        name: kora-icon-theme-${{ steps.version.outputs.VERSION }}.rpm
+        path: ./rpm-release
+
     - name: Create Release
       if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       uses: softprops/action-gh-release@v2
@@ -140,7 +147,7 @@ jobs:
           ### Changes
           View [recent commits](https://github.com/${{ github.repository }}/commits/main) for details.
         files: |
-          /home/runner/RPMs/*.rpm
+          ./rpm-release/*.rpm
         allowUpdates: true
         draft: false
         prerelease: false
