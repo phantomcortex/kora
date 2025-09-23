@@ -3,13 +3,8 @@
   <mime-type type="model/nif">
     <generic-icon name="image-x-generic"/>
     <comment>Gamebryo File Format</comment>
-    <alias type="application/x-nif"/>
+    <alias type="model/x-nif"/>
     <glob pattern="*.nif"/>
-    <magic priority="50">
-        <match value="Gamebryo File Format," type="string" offset="0"/>
-        <match value="\x47\x61\x6D\x65\x72\x79\x6F\x20\x46\x69\x6C\x65\x20\x46\x6F\x72\x6D\x61\x74\x2C" type="string" offset="0"/>
-      </match>
-    </magic>
   </mime-type>
 
 </mime-info>
