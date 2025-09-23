@@ -9,17 +9,19 @@
         <match value="\x54\x45\x53\x34" type="string" offset="0"/>
     </match>
   </mime-type>
-  <mime-type type="application/x-wine-extension-ba2">
+  <mime-type type="application/x-ba2">
     <glob-deleteall/>
     <glob pattern="*.ba2"/>
-    <comment>Bethesda Archive</comment>
+    <alias type="application/x-bethesda-archive-2"/>
+    <comment>Bethesda Archive 2</comment>
     <magic priority="50">
         <match value="\x42\x54\x44\x58\x01" type="string" offset="0"/>
     </match>
   </mime-type>
-  <mime-type type="application/x-wine-extension-bsa">
+  <mime-type type="application/x-bsa">
     <glob-deleteall/>
     <glob pattern="*.bsa"/>
+    <alias type="application/x-bethesda-archive"/>
     <comment>Bethesda Archive</comment>
     <magic priority="50">
         <match value="\x42\x53\x41\x00\x69\x00\x00\x00\x24" type="string" offset="0"/>
