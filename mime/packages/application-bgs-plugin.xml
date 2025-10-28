@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
-    <generic-icon name="image-x-generic"/>
+  <generic-icon name="image-x-generic"/>
+  <mime-type type="application/x-ba2">
     <comment>Elder Scrolls Plugin</comment>
     <glob pattern="*.esp"/>
     <glob pattern="*.esl"/>
@@ -11,13 +12,11 @@
     <glob pattern="*.ba2"/>
     <alias type="application/x-bethesda-archive-2"/>
     <comment>Bethesda Archive 2</comment>
-
   </mime-type>
   <mime-type type="application/x-bsa">
     <glob-deleteall/>
     <glob pattern="*.bsa"/>
     <alias type="application/x-bethesda-archive"/>
     <comment>Bethesda Archive</comment>
-
   </mime-type>
 </mime-info>
