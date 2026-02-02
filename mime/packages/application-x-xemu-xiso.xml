@@ -5,5 +5,7 @@
         <glob-deleteall/>
         <glob pattern="*.xiso.iso"/>
         <glob pattern="*.xiso"/>
+        <alias type="application/x-xiso"/>
+        <alias type="application/xiso"/>
     </mime-type>
 </mime-info>

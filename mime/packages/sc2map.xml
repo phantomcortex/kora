@@ -2,6 +2,9 @@
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
   <mime-type type="application/sc2map">
     <comment>StarCraft 2 Map File</comment>
-    <glob pattern="*.sc2map"/>
+    <glob-deleteall/>
+    <glob pattern="*.sc2map" case-sensitive="false"/>
+    <alias type="application/x-sc2map"/>
+    <alias type="application/x-wine-extension-sc2map"/>
   </mime-type>
 </mime-info>

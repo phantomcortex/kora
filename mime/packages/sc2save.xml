@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/sc2save">
+    <comment>StarCraft 2 Save Game</comment>
+    <glob-deleteall/>
+    <glob pattern="*.sc2save" case-sensitive="false"/>
+    <alias type="application/x-sc2save"/>
+    <alias type="application/x-wine-extension-sc2save"/>
+  </mime-type>
+</mime-info>

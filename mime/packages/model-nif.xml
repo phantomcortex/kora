@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
   <mime-type type="model/nif">
-    <generic-icon name="image-x-generic"/>
+    <generic-icon name="model"/>
     <comment>Gamebryo File Format</comment>
     <alias type="model/x-nif"/>
     <glob pattern="*.nif"/>

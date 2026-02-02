@@ -1,21 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
-    <mime-type type="application/x-ba2">
-        <comment>Elder Scrolls Plugin</comment>
-        <glob pattern="*.esp"/>
-        <glob pattern="*.esl"/>
+    <mime-type type="application/x-bgs-esm">
+        <comment>BGS Master Plugin</comment>
+        <generic-icon name="application-x-cd-generic"/>
         <glob pattern="*.esm"/>
+        <alias type="application/x-esm"/>
+    </mime-type>
+    <mime-type type="application/x-bgs-esl">
+        <generic-icon name="application-x-cd-generic"/>
+        <glob pattern="*.esl"/>
+        <comment>BGS Light Plugin</comment>
+        <alias type="application/x-esl"/>
+    </mime-type>
+    <mime-type type="application/x-bgs-esp">
+        <generic-icon name="application-x-cd-generic"/>
+        <glob pattern="*.esp"/>
+        <comment>BGS Plugin</comment>
+        <alias type="application/x-esp"/>
     </mime-type>
     <mime-type type="application/x-ba2">
         <comment>Bethesda Archive 2</comment>
-        <glob-deleteall/>
+        <generic-icon name="application-x-cd-generic"/>
         <glob pattern="*.ba2"/>
         <alias type="application/x-bethesda-archive-2"/>
     </mime-type>
     <mime-type type="application/x-bsa">
-        <glob-deleteall/>
+        <generic-icon name="application-x-cd-generic"/>
         <glob pattern="*.bsa"/>
         <alias type="application/x-bethesda-archive"/>
         <comment>Bethesda Archive</comment>
+    </mime-type>
+    <mime-type type="application/x-bsl">
+        <generic-icon name="application-x-cd-generic"/>
+        <glob pattern="*.bsl"/>
+        <alias type="application/x-bethesda-archive"/>
+        <comment>Bethesda compression table</comment>
+    </mime-type>
+    <mime-type type="application/x-bgsm">
+        <generic-icon name="application-x-model"/>
+        <glob pattern="*.bgsm"/>
+        <comment>BGS Material File</comment>
     </mime-type>
 </mime-info>

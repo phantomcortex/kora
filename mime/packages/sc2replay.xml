@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/sc2replay">
+    <comment>StarCraft 2 Game Replay</comment>
+    <glob-deleteall/>
+    <glob pattern="*.sc2replay" case-sensitive="false"/>
+    <alias type="application/x-sc2replay"/>
+    <alias type="application/x-wine-extension-sc2replay"/>
+  </mime-type>
+</mime-info>
