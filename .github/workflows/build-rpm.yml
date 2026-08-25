@@ -34,7 +34,7 @@ jobs:
         # Base version components
         MAJOR=2
         MINOR=0
-        PATCH=2
+        PATCH=6
         
         # Get the latest release to find the last build number
         LATEST_RELEASE=$(curl -s -H "Authorization: token $GH_TOKEN" \
